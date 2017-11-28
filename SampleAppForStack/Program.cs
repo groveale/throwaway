@@ -12,11 +12,21 @@ namespace SampleAppForStack
 
         static void Main(string[] args)
         {
-            
+            var dateTime = new DateTime(2017, 11, 28, 0, 0, 0);
+            var plana = new PlanItem { StartTime = dateTime.AddHours(6), EndTime = dateTime.AddHours(9) };
+            var planb = new PlanItem { StartTime = dateTime.AddHours(14), EndTime = dateTime.AddHours(18) };
+            var planc = new PlanItem { StartTime = dateTime.AddHours(16), EndTime = dateTime.AddHours(30) };
+            var pland = new PlanItem { StartTime = dateTime.AddHours(2), EndTime = dateTime.AddHours(30) };
+
+            var planList = new List<PlanItem> { plana, planb, planc };
+
+            var hours = HoursBusy(planList, dateTime);
+
+            Console.ReadKey();
         }
 
 
-        public double HoursBusy(List<PlanItem> plansInDay, DateTime day)
+        public static double HoursBusy(List<PlanItem> plansInDay, DateTime day)
         {
 
             List<TimeFrame> timesInFrame = GetTimeFrames(day);
@@ -28,6 +38,9 @@ namespace SampleAppForStack
                 {
                     // should never be busy
                     if (freeFrame.Busy) { continue; }
+
+                    // if plan finish before frame start then break and go to next plan
+                    if (plan.EndTime < freeFrame.FrameBegin) { break; }
                     
                     // is start in frame
                     freeFrame.Busy = plan.StartTime >= freeFrame.FrameBegin && plan.StartTime < freeFrame.FrameEnd;
